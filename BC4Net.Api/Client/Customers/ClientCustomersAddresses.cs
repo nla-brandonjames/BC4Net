@@ -28,9 +28,7 @@ namespace BigCommerce4Net.Api.ResourceClients
         IChildResourceGet<CustomersAddress>,
         IChildResourceCount
     {
-        public ClientCustomersAddresses(Configuration configuration)
-            :base(configuration)
-        {}
+        public ClientCustomersAddresses(Configuration configuration, BCAuthentication authentication) : base(configuration, authentication) { }
         public async Task<IClientResponse<ItemCount>> CountAsync(int customerId)
         {
             string resourceEndpoint = string.Format("customers/{0}/addresses/count", customerId);

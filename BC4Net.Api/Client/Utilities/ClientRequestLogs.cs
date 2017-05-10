@@ -24,9 +24,7 @@ namespace BigCommerce4Net.Api.ResourceClients
 {
     public class ClientRequestLogs : ClientBase
     {
-        public ClientRequestLogs(Configuration configuration)
-            :base(configuration)
-        {}
+        public ClientRequestLogs(Configuration configuration, BCAuthentication authentication) : base(configuration, authentication) { }
 
         public async Task<IClientResponse<List<RequestLog>>> GetAsync()
         {

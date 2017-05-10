@@ -24,8 +24,9 @@ namespace BigCommerce4Net.Api
     public class Client
     {
         private readonly Configuration _Configuration;
+        protected readonly BCAuthentication _Authentication;
 
-        public Client(Configuration configuration)
+        public Client(Configuration configuration, BCAuthentication authentication = null)
         {
             _Configuration = configuration;
         }
@@ -36,7 +37,7 @@ namespace BigCommerce4Net.Api
             get
             {
                 if (_Products == null)
-                    _Products = new ClientProducts(_Configuration);
+                    _Products = new ClientProducts(_Configuration, _Authentication);
                 return _Products;
             }
         }
@@ -46,7 +47,7 @@ namespace BigCommerce4Net.Api
             get
             {
                 if (_Orders == null)
-                    _Orders = new ClientOrders(_Configuration);
+                    _Orders = new ClientOrders(_Configuration, _Authentication);
                 return _Orders;
             }
         }
@@ -56,7 +57,7 @@ namespace BigCommerce4Net.Api
             get
             {
                 if (_OrdersProducts == null)
-                    _OrdersProducts = new ClientOrdersProducts(_Configuration);
+                    _OrdersProducts = new ClientOrdersProducts(_Configuration, _Authentication);
                 return _OrdersProducts;
             }
         }
@@ -66,7 +67,7 @@ namespace BigCommerce4Net.Api
             get
             {
                 if (_OrdersShipments == null)
-                    _OrdersShipments = new ClientOrdersShipments(_Configuration);
+                    _OrdersShipments = new ClientOrdersShipments(_Configuration, _Authentication);
                 return _OrdersShipments;
             }
         }
@@ -76,7 +77,7 @@ namespace BigCommerce4Net.Api
             get
             {
                 if (_OrdersCoupons == null)
-                    _OrdersCoupons = new ClientOrdersCoupons(_Configuration);
+                    _OrdersCoupons = new ClientOrdersCoupons(_Configuration, _Authentication);
                 return _OrdersCoupons;
             }
         }
@@ -86,7 +87,7 @@ namespace BigCommerce4Net.Api
             get
             {
                 if (_ShippingZones == null)
-                    _ShippingZones = new ClientShippingZones(_Configuration);
+                    _ShippingZones = new ClientShippingZones(_Configuration, _Authentication);
                 return _ShippingZones;
             }
         }
@@ -96,7 +97,7 @@ namespace BigCommerce4Net.Api
             get
             {
                 if (_OrdersShippingAddresses == null)
-                    _OrdersShippingAddresses = new ClientOrdersShippingAddresses(_Configuration);
+                    _OrdersShippingAddresses = new ClientOrdersShippingAddresses(_Configuration, _Authentication);
                 return _OrdersShippingAddresses;
             }
         }
@@ -106,7 +107,7 @@ namespace BigCommerce4Net.Api
             get
             {
                 if (_Utilities == null)
-                    _Utilities = new ClientUtilities(_Configuration);
+                    _Utilities = new ClientUtilities(_Configuration, _Authentication);
                 return _Utilities;
             }
         }
@@ -116,7 +117,7 @@ namespace BigCommerce4Net.Api
             get
             {
                 if (_Customers == null)
-                    _Customers = new ClientCustomers(_Configuration);
+                    _Customers = new ClientCustomers(_Configuration, _Authentication);
                 return _Customers;
             }
         }
@@ -126,7 +127,7 @@ namespace BigCommerce4Net.Api
             get
             {
                 if (_CustomersAddresses == null)
-                    _CustomersAddresses = new ClientCustomersAddresses(_Configuration);
+                    _CustomersAddresses = new ClientCustomersAddresses(_Configuration, _Authentication);
                 return _CustomersAddresses;
             }
         }
@@ -136,7 +137,7 @@ namespace BigCommerce4Net.Api
             get
             {
                 if (_Brands == null)
-                    _Brands = new ClientBrands(_Configuration);
+                    _Brands = new ClientBrands(_Configuration, _Authentication);
                 return _Brands;
             }
         }
@@ -146,7 +147,7 @@ namespace BigCommerce4Net.Api
             get
             {
                 if (_Categories == null)
-                    _Categories = new ClientCategories(_Configuration);
+                    _Categories = new ClientCategories(_Configuration, _Authentication);
                 return _Categories;
             }
         }
@@ -156,7 +157,7 @@ namespace BigCommerce4Net.Api
             get
             {
                 if (_OrderStatuses == null)
-                    _OrderStatuses = new ClientOrderStatuses(_Configuration);
+                    _OrderStatuses = new ClientOrderStatuses(_Configuration, _Authentication);
                 return _OrderStatuses;
             }
         }
@@ -166,7 +167,7 @@ namespace BigCommerce4Net.Api
             get
             {
                 if (_RequestLogs == null)
-                    _RequestLogs = new ClientRequestLogs(_Configuration);
+                    _RequestLogs = new ClientRequestLogs(_Configuration, _Authentication);
                 return _RequestLogs;
             }
         }
@@ -176,7 +177,7 @@ namespace BigCommerce4Net.Api
             get
             {
                 if (_States == null)
-                    _States = new ClientStates(_Configuration);
+                    _States = new ClientStates(_Configuration, _Authentication);
                 return _States;
             }
         }
@@ -186,7 +187,7 @@ namespace BigCommerce4Net.Api
             get
             {
                 if (_Countries == null)
-                    _Countries = new ClientCountries(_Configuration);
+                    _Countries = new ClientCountries(_Configuration, _Authentication);
                 return _Countries;
             }
         }
@@ -196,7 +197,7 @@ namespace BigCommerce4Net.Api
             get
             {
                 if (_ProductsConfigurableFields == null)
-                    _ProductsConfigurableFields = new ClientProductsConfigurableFields(_Configuration);
+                    _ProductsConfigurableFields = new ClientProductsConfigurableFields(_Configuration, _Authentication);
                 return _ProductsConfigurableFields;
             }
         }
@@ -206,7 +207,7 @@ namespace BigCommerce4Net.Api
             get
             {
                 if (_ProductsCustomFields == null)
-                    _ProductsCustomFields = new ClientProductsCustomFields(_Configuration);
+                    _ProductsCustomFields = new ClientProductsCustomFields(_Configuration, _Authentication);
                 return _ProductsCustomFields;
             }
         }
@@ -216,7 +217,7 @@ namespace BigCommerce4Net.Api
             get
             {
                 if (_ProductsDiscountRules == null)
-                    _ProductsDiscountRules = new ClientProductsDiscountRules(_Configuration);
+                    _ProductsDiscountRules = new ClientProductsDiscountRules(_Configuration, _Authentication);
                 return _ProductsDiscountRules;
             }
         }
@@ -226,7 +227,7 @@ namespace BigCommerce4Net.Api
             get
             {
                 if (_ProductsImages == null)
-                    _ProductsImages = new ClientProductsImages(_Configuration);
+                    _ProductsImages = new ClientProductsImages(_Configuration, _Authentication);
                 return _ProductsImages;
             }
         }
@@ -236,7 +237,7 @@ namespace BigCommerce4Net.Api
             get
             {
                 if (_ProductsOptions == null)
-                    _ProductsOptions = new ClientProductsOptions(_Configuration);
+                    _ProductsOptions = new ClientProductsOptions(_Configuration, _Authentication);
                 return _ProductsOptions;
             }
         }
@@ -246,7 +247,7 @@ namespace BigCommerce4Net.Api
             get
             {
                 if (_ProductsRules == null)
-                    _ProductsRules = new ClientProductsRules(_Configuration);
+                    _ProductsRules = new ClientProductsRules(_Configuration, _Authentication);
                 return _ProductsRules;
             }
         }
@@ -256,7 +257,7 @@ namespace BigCommerce4Net.Api
             get
             {
                 if (_ProductsSkus == null)
-                    _ProductsSkus = new ClientProductsSkus(_Configuration);
+                    _ProductsSkus = new ClientProductsSkus(_Configuration, _Authentication);
                 return _ProductsSkus;
             }
         }
@@ -266,7 +267,7 @@ namespace BigCommerce4Net.Api
             get
             {
                 if (_ProductsVideo == null)
-                    _ProductsVideo = new ClientProductsVideo(_Configuration);
+                    _ProductsVideo = new ClientProductsVideo(_Configuration, _Authentication);
                 return _ProductsVideo;
             }
         }
@@ -276,7 +277,7 @@ namespace BigCommerce4Net.Api
             get
             {
                 if (_Options == null)
-                    _Options = new ClientOptions(_Configuration);
+                    _Options = new ClientOptions(_Configuration, _Authentication);
                 return _Options;
             }
         }
@@ -286,7 +287,7 @@ namespace BigCommerce4Net.Api
             get
             {
                 if (_OptionSet == null)
-                    _OptionSet = new ClientOptionSet(_Configuration);
+                    _OptionSet = new ClientOptionSet(_Configuration, _Authentication);
                 return _OptionSet;
             }
         }
@@ -296,7 +297,7 @@ namespace BigCommerce4Net.Api
             get
             {
                 if (_OptionSetOption == null)
-                    _OptionSetOption = new ClientOptionSetOption(_Configuration);
+                    _OptionSetOption = new ClientOptionSetOption(_Configuration, _Authentication);
                 return _OptionSetOption;
             }
         }
@@ -306,7 +307,7 @@ namespace BigCommerce4Net.Api
             get
             {
                 if (_OptionValue == null)
-                    _OptionValue = new ClientOptionValue(_Configuration);
+                    _OptionValue = new ClientOptionValue(_Configuration, _Authentication);
                 return _OptionValue;
             }
         }
@@ -316,7 +317,7 @@ namespace BigCommerce4Net.Api
             get
             {
                 if (_Coupons == null)
-                    _Coupons = new ClientCoupons(_Configuration);
+                    _Coupons = new ClientCoupons(_Configuration, _Authentication);
                 return _Coupons;
             }
         }
@@ -327,7 +328,7 @@ namespace BigCommerce4Net.Api
             get
             {
                 if (_ShippingMethods == null)
-                    _ShippingMethods = new ClientShippingMethods(_Configuration);
+                    _ShippingMethods = new ClientShippingMethods(_Configuration, _Authentication);
                 return _ShippingMethods;
             }
         }

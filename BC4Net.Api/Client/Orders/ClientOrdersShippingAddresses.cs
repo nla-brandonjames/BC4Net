@@ -30,9 +30,7 @@ namespace BigCommerce4Net.Api.ResourceClients
         IChildResourceGet<OrdersShippingAddress>,
         IChildResourceCount
     {
-        public ClientOrdersShippingAddresses(Configuration configuration)
-            :base(configuration)
-        {}
+        public ClientOrdersShippingAddresses(Configuration configuration, BCAuthentication authentication) : base(configuration, authentication) { }
 
         public async Task<IClientResponse<ItemCount>> CountAsync(int orderId)
         {

@@ -29,9 +29,7 @@ namespace BigCommerce4Net.Api.ResourceClients
         IParentResourceGet<State>, 
         IParentResourceCount
     {
-        public ClientStates(Configuration configuration)
-            :base(configuration)
-        {}
+        public ClientStates(Configuration configuration, BCAuthentication authentication) : base(configuration, authentication) { }
 
         public async Task<IClientResponse<ItemCount>> CountAsync()
         {

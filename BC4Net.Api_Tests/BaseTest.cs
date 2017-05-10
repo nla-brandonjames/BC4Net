@@ -41,8 +41,8 @@ namespace BC4Net.Api_Tests
     
     class TestSettings
     {
-        public string StoreHash;
-        public string UserName;
-        public string UserApiKey;
+        public string StoreHash = "";
+        public string UserName = "";
+        public string UserApiKey = "";
     }
 }

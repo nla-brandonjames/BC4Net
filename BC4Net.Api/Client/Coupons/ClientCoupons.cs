@@ -28,8 +28,7 @@ namespace BigCommerce4Net.Api.ResourceClients
         ClientBase, 
         IParentResourceGetUpdateDeleteCreate<Coupon> 
     {
-        public ClientCoupons(Configuration configuration)
-            : base(configuration) { }
+        public ClientCoupons(Configuration configuration, BCAuthentication authentication) : base(configuration, authentication) { }
 
         public async Task<IClientResponse<List<Coupon>>> GetAsync()
         {

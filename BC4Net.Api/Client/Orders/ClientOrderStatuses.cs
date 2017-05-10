@@ -26,9 +26,7 @@ namespace BigCommerce4Net.Api.ResourceClients
         ClientBase,
         IParentResourceGet<OrderStatus>
     {
-        public ClientOrderStatuses(Configuration configuration)
-            : base(configuration)
-        { }
+        public ClientOrderStatuses(Configuration configuration, BCAuthentication authentication) : base(configuration, authentication) { }
 
         public async Task<IClientResponse<List<OrderStatus>>> GetAsync()
         {

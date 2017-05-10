@@ -16,8 +16,6 @@ namespace BigCommerce4Net.Api
         public string Scope { get; set; }
         public string Context { get; set; }
 
-        public string AccessToken { get; set; }
-
         public AppClient(Configuration configuration) : base(configuration) { }
 
         public AppClient(Configuration configuration,
@@ -41,8 +39,9 @@ namespace BigCommerce4Net.Api
             {
                 configuration.StoreHash = context.Split('/')[1];
             }
+            Initialize();
         }
-        
+
         public async void Initialize()
         {
             var authenticationClient = new RestClient("https://login.bigcommerce.com");
@@ -59,7 +58,7 @@ namespace BigCommerce4Net.Api
             request.AddParameter("scope", Scope);
 
             var response = await authenticationClient.Execute<ValidationResponse>(request);
-            AccessToken = response.Data.AccessToken;
+            _Authentication.AccessToken = response.Data.AccessToken;
         }
     }
 

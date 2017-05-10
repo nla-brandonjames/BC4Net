@@ -29,7 +29,7 @@ namespace BigCommerce4Net.Api.ResourceClients
         IParentResourceGet<Country>,
         IParentResourceCount
     {
-        public ClientCountries(Configuration configuration) : base(configuration) { }
+        public ClientCountries(Configuration configuration, BCAuthentication authentication) : base(configuration, authentication) { }
 
         public async Task<IClientResponse<ItemCount>> CountAsync()
         {

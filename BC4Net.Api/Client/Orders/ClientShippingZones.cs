@@ -24,7 +24,7 @@ namespace BigCommerce4Net.Api.ResourceClients
 {
     public class ClientShippingZones : ClientBase
     {
-        public ClientShippingZones(Configuration configuration) : base(configuration) { }
+        public ClientShippingZones(Configuration configuration, BCAuthentication authentication) : base(configuration, authentication) { }
 
         public async Task<IClientResponse<List<ShippingZone>>> GetAsync()
         {

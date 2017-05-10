@@ -28,8 +28,7 @@ namespace BigCommerce4Net.Api.ResourceClients
         ClientBase, 
         IParentResourcePaging<OptionValue>
     {
-        public ClientOptionValue(Configuration configuration)
-            : base(configuration) { }
+        public ClientOptionValue(Configuration configuration, BCAuthentication authentication) : base(configuration, authentication) { }
 
         public async Task<IClientResponse<ItemCount>> CountAsync()
         {

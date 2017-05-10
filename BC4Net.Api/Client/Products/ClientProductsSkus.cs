@@ -29,8 +29,7 @@ namespace BigCommerce4Net.Api.ResourceClients
         IChildResourceGetUpdateDeleteCreate<ProductsSku>,
         IChildResourceCount
     {
-        public ClientProductsSkus(Configuration configuration)
-            : base(configuration) { }
+        public ClientProductsSkus(Configuration configuration, BCAuthentication authentication) : base(configuration, authentication) { }
 
         public async Task<IClientResponse<ItemCount>> CountAsync(int productid)
         {

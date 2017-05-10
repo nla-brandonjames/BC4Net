@@ -24,8 +24,7 @@ namespace BigCommerce4Net.Api.ResourceClients
 {
     public class ClientUtilities : ClientBase
     {
-        public ClientUtilities(Configuration configuration) : base(configuration)
-        { }
+        public ClientUtilities(Configuration configuration, BCAuthentication authentication) : base(configuration, authentication) { }
 
         public async Task<IClientResponse<ServerDateTime>> GetTimeAsync()
         {

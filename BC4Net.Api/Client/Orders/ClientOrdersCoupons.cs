@@ -28,9 +28,7 @@ namespace BigCommerce4Net.Api.ResourceClients
         IChildResourceGet<OrdersCoupon>,
         IChildResourceCount
     {
-        public ClientOrdersCoupons(Configuration configuration)
-            :base(configuration)
-        {}
+        public ClientOrdersCoupons(Configuration configuration, BCAuthentication authentication) : base(configuration, authentication) { }
 
         public async Task<IClientResponse<ItemCount>> CountAsync(int orderId)
         {

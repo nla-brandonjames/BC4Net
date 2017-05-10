@@ -29,8 +29,7 @@ namespace BigCommerce4Net.Api.ResourceClients
         IChildResourceGetUpdateDeleteCreate<ProductsImage>,
         IChildResourceCount
     {
-        public ClientProductsImages(Configuration configuration)
-            : base(configuration) { }
+        public ClientProductsImages(Configuration configuration, BCAuthentication authentication) : base(configuration, authentication) { }
 
         public async Task<IClientResponse<ItemCount>> CountAsync(int productid)
         {

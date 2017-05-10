@@ -30,9 +30,7 @@ namespace BigCommerce4Net.Api.ResourceClients
         IParentResourceGetUpdateDeleteCreate<Customer>, 
         IParentResourceCount
     {
-        public ClientCustomers(Configuration configuration)
-            :base(configuration)
-        {}
+        public ClientCustomers(Configuration configuration, BCAuthentication authentication) : base(configuration, authentication) { }
 
         public async Task<IClientResponse<ItemCount>> CountAsync()
         {

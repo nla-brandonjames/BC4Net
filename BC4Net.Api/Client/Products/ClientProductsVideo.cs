@@ -28,8 +28,7 @@ namespace BigCommerce4Net.Api.ResourceClients
         IChildResourceGet<ProductsVideo>,
         IChildResourceCount
     {
-        public ClientProductsVideo(Configuration configuration)
-            : base(configuration) { }
+        public ClientProductsVideo(Configuration configuration, BCAuthentication authentication) : base(configuration, authentication) { }
 
         public async Task<IClientResponse<ItemCount>> CountAsync(int productid)
         {

@@ -29,11 +29,13 @@ namespace BigCommerce4Net.Api
     public abstract class ClientBase
     {
         protected readonly Configuration _Configuration;
+        protected readonly BCAuthentication _Authentication;
 
-        protected ClientBase(Configuration _configuration)
+        protected ClientBase(Configuration _configuration, BCAuthentication _authentication = null)
         {
             _configuration.AreConfigurationSet();
             _Configuration = _configuration;
+            _Authentication = _authentication;
         }
 
         protected async Task<IClientResponse<T>> CountAsync<T>(string resourceEndpoint) where T : new()
@@ -233,8 +235,16 @@ namespace BigCommerce4Net.Api
             request.AddParameter("User-Agent", _Configuration.UserAgent, ParameterType.HttpHeader);
 
             var client = new RestClient(_Configuration.ServiceURL);
-            
-            client.Authenticator = new HttpBasicAuthenticator(_Configuration.UserName, _Configuration.UserApiKey);
+
+            if (_Authentication == null)
+            {
+                client.Authenticator = new HttpBasicAuthenticator(_Configuration.UserName, _Configuration.UserApiKey);            
+            }
+            else
+            {
+                request.AddParameter("X-Auth-Client", _Configuration.UserName, ParameterType.HttpHeader);
+			    request.AddParameter("X-Auth-Token", _Authentication.AccessToken, ParameterType.HttpHeader);
+            }
 
             client.Timeout = TimeSpan.FromSeconds(_Configuration.RequestTimeout);
 
