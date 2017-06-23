@@ -257,9 +257,13 @@ namespace BigCommerce4Net.Domain
                 int tmpInt;
                 bool wasParsed = int.TryParse(value, out tmpInt);
                 if (wasParsed)
+                {
                     ItemsShipped = tmpInt;
+                }
                 else
+                {
                     ItemsShipped = 0;
+                }
             }
         }
 

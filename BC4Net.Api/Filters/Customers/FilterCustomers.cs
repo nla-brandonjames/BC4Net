@@ -15,11 +15,8 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using RestSharp.Portable;
-
+using System.Collections.Generic;
 
 namespace BigCommerce4Net.Api
 {
@@ -80,42 +77,66 @@ namespace BigCommerce4Net.Api
         /// </summary>
         public DateTime? MaxDateCreated { get; set; }
 
-        public override void AddFilter(IRestRequest request) {
-            base.AddFilter(request);
+        public override string AddFilter(string request)
+        {
+            request = base.AddFilter(request);
+            var filters = new Dictionary<string, string>();
 
-            if (this.MinimumId != null) {
-                request.AddParameter("min_id", this.MinimumId, ParameterType.GetOrPost);
+            if (MinimumId != null)
+            {
+                filters.Add("min_id", MinimumId.Value.ToString());
             }
-            if (this.MaximumId != null) {
-                request.AddParameter("max_id", this.MaximumId, ParameterType.GetOrPost);
+            if (MaximumId != null)
+            {
+                filters.Add("max_id", MaximumId.Value.ToString());
             }
-            if (this.FirstName != null) {
-                request.AddParameter("first_name", this.FirstName, ParameterType.GetOrPost);
+            if (FirstName != null)
+            {
+                filters.Add("first_name", FirstName);
             }
-            if (this.LastName != null) {
-                request.AddParameter("last_name", this.LastName, ParameterType.GetOrPost);
+            if (LastName != null)
+            {
+                filters.Add("last_name", LastName);
             }
-            if (this.Company != null) {
-                request.AddParameter("company", this.Company, ParameterType.GetOrPost);
+            if (Company != null)
+            {
+                filters.Add("company", Company);
             }
-            if (this.Email != null) {
-                request.AddParameter("email", this.Email, ParameterType.GetOrPost);
+            if (Email != null)
+            {
+                filters.Add("email", Email);
             }
-            if (this.Phone != null) {
-                request.AddParameter("phone", this.Phone, ParameterType.GetOrPost);
+            if (Phone != null)
+            {
+                filters.Add("phone", Phone);
             }
-            if (this.StoreCredit != null) {
-                request.AddParameter("store_credit", this.StoreCredit, ParameterType.GetOrPost);
+            if (StoreCredit != null)
+            {
+                filters.Add("store_credit", StoreCredit.Value.ToString());
             }
-            if (this.CustomerGroupId != null) {
-                request.AddParameter("customer_group_id", this.CustomerGroupId, ParameterType.GetOrPost);
+            if (CustomerGroupId != null)
+            {
+                filters.Add("customer_group_id", CustomerGroupId.Value.ToString());
             }
-            if (this.MinDateCreated != null) {
-                request.AddParameter("min_date_created", String.Format(RFC2822_DATE_FORMAT, this.MinDateCreated), ParameterType.GetOrPost);
+            if (MinDateCreated != null)
+            {
+                filters.Add("min_date_created", String.Format(RFC2822_DATE_FORMAT, MinDateCreated));
             }
-            if (this.MaxDateCreated != null) {
-                request.AddParameter("max_date_created", String.Format(RFC2822_DATE_FORMAT, this.MaxDateCreated), ParameterType.GetOrPost);
+            if (MaxDateCreated != null)
+            {
+                filters.Add("max_date_created", String.Format(RFC2822_DATE_FORMAT, MaxDateCreated));
             }
+
+            var filterString = string.Join("&",
+                    filters.Select(kvp =>
+                    string.Format("{0}={1}", kvp.Key, System.Net.WebUtility.UrlEncode(kvp.Value))));
+
+            if (!request.Contains("?") && filters.Keys.Count > 0)
+            {
+                request += "?";
+            }
+
+            return request + filterString;
         }
     }
 }

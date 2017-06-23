@@ -15,10 +15,8 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using RestSharp.Portable;
+using System.Collections.Generic;
 
 namespace BigCommerce4Net.Api
 {
@@ -134,82 +132,116 @@ namespace BigCommerce4Net.Api
         /// </summary>
         public int? MaximumNumberSold { get; set; }
 
+        public override string AddFilter(string request)
+        {
+            request = base.AddFilter(request);
+            var filters = new Dictionary<string, string>();
 
-        public override void AddFilter(IRestRequest request) {
-            base.AddFilter(request);
+            if (MinimumId != null)
+            {
+                filters.Add("min_id", MinimumId.Value.ToString());
+            }
+            if (MaximumId != null)
+            {
+                filters.Add("max_id", MaximumId.Value.ToString());
+            }
+            if (Name != null)
+            {
+                filters.Add("name", Name);
+            }
+            if (Sku != null)
+            {
+                filters.Add("sku", Sku);
+            }
+            if (Description != null)
+            {
+                filters.Add("description", Description);
+            }
+            if (Condition != null)
+            {
+                filters.Add("condition", Condition);
+            }
+            if (Availability != null)
+            {
+                filters.Add("availability", Availability);
+            }
+            if (BrandId != null)
+            {
+                filters.Add("brand_id", BrandId.Value.ToString());
+            }
+            if (MimimumDateCreated != null)
+            {
+                filters.Add("min_date_created",
+                    String.Format(RFC2822_DATE_FORMAT, MimimumDateCreated));
+            }
+            if (MaximumDateCreated != null)
+            {
+                filters.Add("max_date_created",
+                    String.Format(RFC2822_DATE_FORMAT, MaximumDateCreated));
+            }
+            if (MimimumDateModified != null)
+            {
+                filters.Add("min_date_modified",
+                    String.Format(RFC2822_DATE_FORMAT, MimimumDateModified));
+            }
+            if (MaximumDateModified != null)
+            {
+                filters.Add("max_date_modified",
+                    String.Format(RFC2822_DATE_FORMAT, MaximumDateModified));
+            }
+            if (MinimumDateLastImported != null)
+            {
+                filters.Add("min_date_last_imported",
+                    String.Format(RFC2822_DATE_FORMAT, MinimumDateLastImported));
+            }
+            if (MaximumDateLastImported != null)
+            {
+                filters.Add("max_date_last_imported",
+                    String.Format(RFC2822_DATE_FORMAT, MaximumDateLastImported));
+            }
+            if (IsVisible != null)
+            {
+                filters.Add("is_visible", IsVisible.Value.ToString());
+            }
+            if (IsFeatured != null)
+            {
+                filters.Add("is_featured", IsFeatured.Value.ToString());
+            }
+            if (MimimumInventoryLevel != null)
+            {
+                filters.Add("min_inventory_level", MimimumInventoryLevel.Value.ToString());
+            }
+            if (MaximumInventoryLevel != null)
+            {
+                filters.Add("max_inventory_level", MaximumInventoryLevel.Value.ToString());
+            }
+            if (MimimumPrice != null)
+            {
+                filters.Add("min_price", MimimumPrice.Value.ToString());
+            }
+            if (MaximumPrice != null)
+            {
+                filters.Add("max_price", MaximumPrice.Value.ToString());
+            }
+            if (MimimumNumberSold != null)
+            {
+                filters.Add("min_number_sold", MimimumNumberSold.Value.ToString());
+            }
+            if (MaximumNumberSold != null)
+            {
+                filters.Add("max_number_sold", MaximumNumberSold.Value.ToString());
+            }
 
-            if (this.MinimumId != null) {
-                request.AddParameter("min_id", this.MinimumId, ParameterType.GetOrPost);
+            var filterString = string.Join("&",
+                    filters.Select(kvp =>
+                    string.Format("{0}={1}", kvp.Key, System.Net.WebUtility.UrlEncode(kvp.Value))));
+
+            if (!request.Contains("?") && filters.Keys.Count > 0)
+            {
+                request += "?";
             }
-            if (this.MaximumId != null) {
-                request.AddParameter("max_id", this.MaximumId, ParameterType.GetOrPost);
-            }
-            if (this.Name != null) {
-                request.AddParameter("name", this.Name, ParameterType.GetOrPost);
-            }
-            if (this.Sku != null) {
-                request.AddParameter("sku", this.Sku, ParameterType.GetOrPost);
-            }
-            if (this.Description != null) {
-                request.AddParameter("description", this.Description, ParameterType.GetOrPost);
-            }
-            if (this.Condition != null) {
-                request.AddParameter("condition", this.Condition, ParameterType.GetOrPost);
-            }
-            if (this.Availability != null) {
-                request.AddParameter("availability", this.Availability, ParameterType.GetOrPost);
-            }
-            if (this.BrandId != null) {
-                request.AddParameter("brand_id", this.BrandId, ParameterType.GetOrPost);
-            }
-            if (this.MimimumDateCreated != null) {
-                request.AddParameter("min_date_created",
-                    String.Format(RFC2822_DATE_FORMAT, this.MimimumDateCreated), ParameterType.GetOrPost);
-            }
-            if (this.MaximumDateCreated != null) {
-                request.AddParameter("max_date_created",
-                    String.Format(RFC2822_DATE_FORMAT, this.MaximumDateCreated), ParameterType.GetOrPost);
-            }
-            if (this.MimimumDateModified != null) {
-                request.AddParameter("min_date_modified",
-                    String.Format(RFC2822_DATE_FORMAT, this.MimimumDateModified), ParameterType.GetOrPost);
-            }
-            if (this.MaximumDateModified != null) {
-                request.AddParameter("max_date_modified",
-                    String.Format(RFC2822_DATE_FORMAT, this.MaximumDateModified), ParameterType.GetOrPost);
-            }
-            if (this.MinimumDateLastImported != null) {
-                request.AddParameter("min_date_last_imported",
-                    String.Format(RFC2822_DATE_FORMAT, this.MinimumDateLastImported), ParameterType.GetOrPost);
-            }
-            if (this.MaximumDateLastImported != null) {
-                request.AddParameter("max_date_last_imported",
-                    String.Format(RFC2822_DATE_FORMAT, this.MaximumDateLastImported), ParameterType.GetOrPost);
-            }
-            if (this.IsVisible != null) {
-                request.AddParameter("is_visible", this.IsVisible, ParameterType.GetOrPost);
-            }
-            if (this.IsFeatured != null) {
-                request.AddParameter("is_featured", this.IsFeatured, ParameterType.GetOrPost);
-            }
-            if (this.MimimumInventoryLevel != null) {
-                request.AddParameter("min_inventory_level", this.MimimumInventoryLevel, ParameterType.GetOrPost);
-            }
-            if (this.MaximumInventoryLevel != null) {
-                request.AddParameter("max_inventory_level", this.MaximumInventoryLevel, ParameterType.GetOrPost);
-            }
-            if (this.MimimumPrice != null) {
-                request.AddParameter("min_price", this.MimimumPrice, ParameterType.GetOrPost);
-            }
-            if (this.MaximumPrice != null) {
-                request.AddParameter("max_price", this.MaximumPrice, ParameterType.GetOrPost);
-            }
-            if (this.MimimumNumberSold != null) {
-                request.AddParameter("min_number_sold", this.MimimumNumberSold, ParameterType.GetOrPost);
-            }
-            if (this.MaximumNumberSold != null) {
-                request.AddParameter("max_number_sold", this.MaximumNumberSold, ParameterType.GetOrPost);
-            }
+
+            return request + filterString;
         }
     }
 }

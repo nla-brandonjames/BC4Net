@@ -335,18 +335,26 @@ namespace BigCommerce4Net.Domain
             get
             {
                 if (OptionSetId == -1)
+                {
                     return "NULL";
+                }
                 else
+                {
                     return OptionSetId.ToString();
+                }
             }
             set
             {
                 int tmpInt;
                 bool wasParsed = int.TryParse(value, out tmpInt);
                 if (wasParsed)
+                {
                     OptionSetId = tmpInt;
+                }
                 else
+                {
                     OptionSetId = -1;
+                }
             }
         }
 
@@ -363,18 +371,26 @@ namespace BigCommerce4Net.Domain
             get
             {
                 if (ParentOrderProductId == -1)
+                {
                     return "NULL";
+                }
                 else
+                {
                     return ParentOrderProductId.ToString();
+                }
             }
             set
             {
                 int tmpInt;
                 bool wasParsed = int.TryParse(value, out tmpInt);
                 if (wasParsed)
+                {
                     ParentOrderProductId = tmpInt;
+                }
                 else
+                {
                     ParentOrderProductId = -1;
+                }
             }
         }
 

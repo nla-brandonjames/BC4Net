@@ -13,12 +13,7 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License. 
 #endregion
-
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using RestSharp.Portable;
 
 namespace BigCommerce4Net.Api
 {
@@ -39,19 +34,34 @@ namespace BigCommerce4Net.Api
         /// </summary>
         public string Name { get; set; }
 
+        public override string AddFilter(string request)
+        {
+            request = base.AddFilter(request);
+            var filters = new System.Collections.Generic.Dictionary<string, string>();
 
-        public override void AddFilter(IRestRequest request) {
-            base.AddFilter(request);
+            if (MinimumId != null)
+            {
+                filters.Add("min_id", MinimumId.Value.ToString());
+            }
+            if (MaximumId != null)
+            {
+                filters.Add("max_id", MaximumId.Value.ToString());
+            }
+            if (Name != null)
+            {
+                filters.Add("name", Name);
+            }
 
-            if (MinimumId != null) {
-                request.AddParameter("min_id", MinimumId, ParameterType.GetOrPost);
+            var filterString = string.Join("&",
+                    filters.Select(kvp =>
+                    string.Format("{0}={1}", kvp.Key, System.Net.WebUtility.UrlEncode(kvp.Value))));
+
+            if (!request.Contains("?") && filters.Keys.Count > 0)
+            {
+                request += "?";
             }
-            if (MaximumId != null) {
-                request.AddParameter("max_id", MaximumId, ParameterType.GetOrPost);
-            }
-            if (Name != null) {
-                request.AddParameter("name", Name, ParameterType.GetOrPost);
-            }
+
+            return request + filterString;
         }
     }
 

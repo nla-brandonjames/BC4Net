@@ -29,18 +29,26 @@ namespace BigCommerce4Net.Domain.ExtensionMethods
             DateTime tmpDate;
             bool wasParsed = DateTime.TryParse(value, CultureInfo.InvariantCulture.DateTimeFormat, DateTimeStyles.None, out tmpDate);
             if (wasParsed)
+            {
                 returnValue = tmpDate;
+            }
             else
+            {
                 returnValue = null;
+            }
 
             return returnValue;
         }
 
         public static string DateTimeToString(this DateTime? theDateTime) {
             if (theDateTime == DateTime.MinValue || theDateTime == null)
+            {
                 return String.Empty;
+            }
             else
+            {
                 return ((DateTime)theDateTime).ToUniversalTime().ToString("r");
+            }
         }
     }
 }

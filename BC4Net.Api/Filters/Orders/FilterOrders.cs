@@ -15,10 +15,8 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using RestSharp.Portable;
+using System.Collections.Generic;
 
 namespace BigCommerce4Net.Api
 {
@@ -78,39 +76,62 @@ namespace BigCommerce4Net.Api
         /// </summary>
         public DateTime? MaximumDateCreated { get; set; }
 
-        public override void AddFilter(IRestRequest request) {
-            base.AddFilter(request);
-                
-            if (this.MinimumId != null) {
-                request.AddParameter("min_id", this.MinimumId, ParameterType.GetOrPost);
+        public override string AddFilter(string request)
+        {
+            request = base.AddFilter(request);
+            var filters = new Dictionary<string, string>();
+
+            if (MinimumId != null)
+            {
+                filters.Add("min_id", MinimumId.Value.ToString());
             }
-            if (this.MaximumId != null) {
-                request.AddParameter("max_id", this.MaximumId, ParameterType.GetOrPost);
+            if (MaximumId != null)
+            {
+                filters.Add("max_id", MaximumId.Value.ToString());
             }
-            if (this.MinimumTotal != null) {
-                request.AddParameter("min_total", this.MinimumTotal, ParameterType.GetOrPost);
+            if (MinimumTotal != null)
+            {
+                filters.Add("min_total", MinimumTotal.Value.ToString());
             }
-            if (this.MaximumTotal != null) {
-                request.AddParameter("max_total", this.MaximumTotal, ParameterType.GetOrPost);
+            if (MaximumTotal != null)
+            {
+                filters.Add("max_total", MaximumTotal.Value.ToString());
             }
-            if (this.CustomerId != null) {
-                request.AddParameter("customer_id", this.CustomerId, ParameterType.GetOrPost);
+            if (CustomerId != null)
+            {
+                filters.Add("customer_id", CustomerId.Value.ToString());
             }
-            if (this.StatusId != null) {
-                request.AddParameter("status_id", this.StatusId, ParameterType.GetOrPost);
+            if (StatusId != null)
+            {
+                filters.Add("status_id", StatusId.Value.ToString());
             }
-            if (this.IsDeleted != null) {
-                request.AddParameter("is_deleted", this.IsDeleted, ParameterType.GetOrPost);
+            if (IsDeleted != null)
+            {
+                filters.Add("is_deleted", IsDeleted.Value.ToString());
             }
-            if (this.PaymentMethod != null) {
-                request.AddParameter("payment_method", this.PaymentMethod, ParameterType.GetOrPost);
+            if (PaymentMethod != null)
+            {
+                filters.Add("payment_method", PaymentMethod);
             }
-            if (this.MinimumDateCreated != null) {
-                request.AddParameter("min_date_created", String.Format(RFC2822_DATE_FORMAT, this.MinimumDateCreated), ParameterType.GetOrPost);
+            if (MinimumDateCreated != null)
+            {
+                filters.Add("min_date_created", String.Format(RFC2822_DATE_FORMAT, MinimumDateCreated));
             }
-            if (this.MaximumDateCreated != null) {
-                request.AddParameter("max_date_created", String.Format(RFC2822_DATE_FORMAT, this.MaximumDateCreated), ParameterType.GetOrPost);
+            if (MaximumDateCreated != null)
+            {
+                filters.Add("max_date_created", String.Format(RFC2822_DATE_FORMAT, MaximumDateCreated));
             }
+            
+            var filterString = string.Join("&",
+                    filters.Select(kvp =>
+                    string.Format("{0}={1}", kvp.Key, System.Net.WebUtility.UrlEncode(kvp.Value))));
+
+            if (!request.Contains("?") && filters.Keys.Count > 0)
+            {
+                request += "?";
+            }
+
+            return request + filterString;
         }
     }
 }

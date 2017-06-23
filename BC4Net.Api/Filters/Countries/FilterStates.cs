@@ -14,11 +14,7 @@
 //   limitations under the License. 
 #endregion
 
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using RestSharp.Portable;
 
 namespace BigCommerce4Net.Api
 {
@@ -34,15 +30,30 @@ namespace BigCommerce4Net.Api
         /// </summary>
         public string StateAbbreviation { get; set; }
 
-        public override void AddFilter(IRestRequest request) {
-            base.AddFilter(request);
+        public override string AddFilter(string request)
+        {
+            request = base.AddFilter(request);
+            var filters = new System.Collections.Generic.Dictionary<string, string>();
 
-            if (StateName != null) {
-                request.AddParameter("state", StateName, ParameterType.GetOrPost);
+            if (StateName != null)
+            {
+                filters.Add("state", StateName);
             }
-            if (StateAbbreviation != null) {
-                request.AddParameter("state_abbreviation", StateAbbreviation, ParameterType.GetOrPost);
+            if (StateAbbreviation != null)
+            {
+                filters.Add("state_abbreviation", StateAbbreviation);
             }
+
+            var filterString = string.Join("&",
+                    filters.Select(kvp =>
+                    string.Format("{0}={1}", kvp.Key, System.Net.WebUtility.UrlEncode(kvp.Value))));
+
+            if (!request.Contains("?") && filters.Keys.Count > 0)
+            {
+                request += "?" + filterString;
+            }
+
+            return request + filterString;
         }
     }
 }

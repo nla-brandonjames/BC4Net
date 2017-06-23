@@ -17,15 +17,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using RestSharp.Portable;
 
 namespace BigCommerce4Net.Api
 {
     public class Filter : IFilter
     {
         protected const string RFC2822_DATE_FORMAT = "{0:ddd, dd MMM yyyy HH:mm:ss} GMT";
-        
+
         /// <summary>
         /// How many results you'd like returned by providing a 
         /// limit parameter, which has a maximum of 250
@@ -48,21 +46,31 @@ namespace BigCommerce4Net.Api
         /// </summary>
         public DateTime? MinDateModified { get; set; }
 
-        public virtual void AddFilter(IRestRequest request)
+        public virtual string AddFilter(string request)
         {
-            if (this.MinDateModified != null)
-                request.AddParameter("min_date_modified", String.Format(RFC2822_DATE_FORMAT, this.MinDateModified));
+            var filters = new Dictionary<string, string>();
 
-            if (this.Limit != null)
+            if (MinDateModified != null)
             {
-                request.AddParameter("limit", Limit, ParameterType.GetOrPost);
+                filters.Add("min_date_modified", String.Format(RFC2822_DATE_FORMAT, MinDateModified));
             }
-            if (this.Page != null)
+
+            if (Limit != null)
             {
-                request.AddParameter("page", Page, ParameterType.GetOrPost);
+                filters.Add("limit", Limit.Value.ToString());
             }
-            
+            if (Page != null)
+            {
+                filters.Add("page", Page.Value.ToString());
+            }
+
+            var url = string.Format(request + "?{0}",
+                    string.Join("&",
+                    filters.Select(kvp =>
+                    string.Format("{0}={1}", kvp.Key, System.Net.WebUtility.UrlEncode(kvp.Value)))));
+
+            return url;
         }
     }
-    
+
 }

@@ -14,11 +14,8 @@
 //   limitations under the License. 
 #endregion
 
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using RestSharp.Portable;
+using System.Collections.Generic;
 
 namespace BigCommerce4Net.Api
 {
@@ -30,29 +27,46 @@ namespace BigCommerce4Net.Api
         public int? MinId { get; set; }
         public int? MaxId { get; set; }
 
+        public override string AddFilter(string request)
+        {
+            request = base.AddFilter(request);
+            var filters = new Dictionary<string, string>();
 
-        public override void AddFilter(IRestRequest request) {
-            base.AddFilter(request);
-
-            if (this.CouponCode != null) {
-                request.AddParameter("code", this.CouponCode, ParameterType.GetOrPost);
+            if (CouponCode != null)
+            {
+                filters.Add("code", CouponCode);
             }
 
-            if (this.CouponType != null) {
-                request.AddParameter("type", this.CouponType, ParameterType.GetOrPost);
+            if (CouponType != null)
+            {
+                filters.Add("type", CouponType);
             }
 
-            if (this.Name != null) {
-                request.AddParameter("name", this.Name, ParameterType.GetOrPost);
+            if (Name != null)
+            {
+                filters.Add("name", Name);
             }
 
-            if (this.MinId != null) {
-                request.AddParameter("min_id", this.MinId, ParameterType.GetOrPost);
+            if (MinId != null)
+            {
+                filters.Add("min_id", MinId.Value.ToString());
             }
 
-            if (this.MaxId != null) {
-                request.AddParameter("max_id", this.MaxId, ParameterType.GetOrPost);
+            if (MaxId != null)
+            {
+                filters.Add("max_id", MaxId.ToString());
             }
+
+            var filterString = string.Join("&",
+                    filters.Select(kvp =>
+                    string.Format("{0}={1}", kvp.Key, System.Net.WebUtility.UrlEncode(kvp.Value))));
+
+            if (!request.Contains("?") && filters.Keys.Count > 0)
+            {
+                request += "?" + filterString;
+            }
+
+            return request + filterString;
         }
     }
 }

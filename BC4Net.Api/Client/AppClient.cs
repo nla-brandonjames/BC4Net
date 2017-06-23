@@ -1,9 +1,5 @@
 ﻿using Newtonsoft.Json;
-using RestSharp.Portable;
-using RestSharp.Portable.HttpClient;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace BigCommerce4Net.Api
 {
@@ -39,26 +35,6 @@ namespace BigCommerce4Net.Api
             {
                 configuration.StoreHash = context.Split('/')[1];
             }
-            Initialize();
-        }
-
-        public async void Initialize()
-        {
-            var authenticationClient = new RestClient("https://login.bigcommerce.com");
-            var request = new RestRequest("oauth2/token", Method.POST);
-
-            request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
-            request.AddHeader("Accept", "application/json");
-
-            request.AddParameter("client_id", ClientId, ParameterType.RequestBody);
-            request.AddParameter("client_secret", ClientSecret, ParameterType.RequestBody);
-            request.AddParameter("grant_type", "authorization_code");
-            request.AddParameter("context", Context);
-            request.AddParameter("redirect_uri", RedirectUri);
-            request.AddParameter("scope", Scope);
-
-            var response = await authenticationClient.Execute<ValidationResponse>(request);
-            _Authentication.AccessToken = response.Data.AccessToken;
         }
     }
 

@@ -39,7 +39,9 @@ namespace BigCommerce4Net.Domain
             {
                 _Time = value;
                 if (_Time != null)
+                {
                     CurrentDateTime = ConvertFromUnixTimestamp((double)_Time);
+                }
             }
         }
         /// <summary>

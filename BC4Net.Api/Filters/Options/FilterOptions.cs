@@ -14,11 +14,8 @@
 //   limitations under the License. 
 #endregion
 
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using RestSharp.Portable;
+using System.Collections.Generic;
 
 namespace BigCommerce4Net.Api
 {
@@ -28,21 +25,33 @@ namespace BigCommerce4Net.Api
         public string DisplayName { get; set; }
         public string OptionType { get; set; }
 
+        public override string AddFilter(string request)
+        {
+            request += base.AddFilter(request);
+            var filters = new Dictionary<string, string>();
 
-        public override void AddFilter(IRestRequest request) {
-            base.AddFilter(request);
-
-            if (this.Name != null) {
-                request.AddParameter("name", this.Name, ParameterType.GetOrPost);
+            if (Name != null) {
+                filters.Add("name", Name);
             }
 
-            if (this.DisplayName != null) {
-                request.AddParameter("display_name", this.DisplayName, ParameterType.GetOrPost);
+            if (DisplayName != null) {
+                filters.Add("display_name", DisplayName);
             }
 
-            if (this.OptionType != null) {
-                request.AddParameter("type", this.OptionType, ParameterType.GetOrPost);
+            if (OptionType != null) {
+                filters.Add("type", OptionType);
             }
+
+            var filterString = string.Join("&",
+                    filters.Select(kvp =>
+                    string.Format("{0}={1}", kvp.Key, System.Net.WebUtility.UrlEncode(kvp.Value))));
+
+            if (!request.Contains("?") && filters.Keys.Count > 0)
+            {
+                request += "?";
+            }
+
+            return request + filterString;
         }
     }
 }

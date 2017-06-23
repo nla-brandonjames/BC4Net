@@ -14,11 +14,7 @@
 //   limitations under the License. 
 #endregion
 
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using RestSharp.Portable;
 
 namespace BigCommerce4Net.Api
 {
@@ -39,18 +35,34 @@ namespace BigCommerce4Net.Api
         /// </summary>
         public string CountryIso3 { get; set; }
 
-        public override void AddFilter(IRestRequest request) {
-            base.AddFilter(request);
+        public override string AddFilter(string request)
+        {
+            request = base.AddFilter(request);
+            var filters = new System.Collections.Generic.Dictionary<string, string>();
 
-            if (CountryName != null) {
-                request.AddParameter("country", CountryName, ParameterType.GetOrPost);
+            if (CountryName != null)
+            {
+                filters.Add("country", CountryName);
             }
-            if (CountryIso2 != null) {
-                request.AddParameter("country_iso2", CountryIso2, ParameterType.GetOrPost);
+            if (CountryIso2 != null)
+            {
+                filters.Add("country_iso2", CountryIso2);
             }
-            if (CountryIso3 != null) {
-                request.AddParameter("country_iso3", CountryIso3, ParameterType.GetOrPost);
+            if (CountryIso3 != null)
+            {
+                filters.Add("country_iso3", CountryIso3);
             }
+
+            var filterString = string.Join("&",
+                    filters.Select(kvp =>
+                    string.Format("{0}={1}", kvp.Key, System.Net.WebUtility.UrlEncode(kvp.Value))));
+
+            if (!request.Contains("?") && filters.Keys.Count > 0)
+            {
+                request += "?" + filterString;
+            }
+
+            return request + filterString;
         }
     }
 }

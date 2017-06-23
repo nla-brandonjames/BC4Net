@@ -15,9 +15,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace BigCommerce4Net.Api
 {
@@ -25,9 +22,9 @@ namespace BigCommerce4Net.Api
     {
         public string ServiceURL
         {
-            get { return $"https://store-{StoreHash}.mybigcommerce.com/api/v2"; }
+            get { return $"https://store-{StoreHash}.mybigcommerce.com/api/v2/"; }
         }
-        
+
         public string StoreHash { get; set; }
         public string UserName { get; set; }
         public string UserApiKey { get; set; }
@@ -41,7 +38,8 @@ namespace BigCommerce4Net.Api
         public int RecordsPerPage { get; set; }
         public bool AllowDeletions { get; set; }
 
-        public Configuration() {
+        public Configuration()
+        {
             UserAgent = "BigCommerce4Net";
             RequestTimeout = 100000;
             ErrorRetryMax = 5;
@@ -53,19 +51,28 @@ namespace BigCommerce4Net.Api
             AllowDeletions = false;
         }
         public Configuration(string serviceURL, string userName, string userApiKey)
-            : this() {
-            this.UserName = userName;
-            this.UserApiKey = userApiKey;
+            : this()
+        {
+            UserName = userName;
+            UserApiKey = userApiKey;
         }
-        
+
         internal void AreConfigurationSet()
         {
             if (StoreHash == null)
+            {
                 throw new ArgumentNullException("StoreHash", "StoreHash cannot be null.");
+            }
+
             if (UserName == null)
+            {
                 throw new ArgumentNullException("UserName", "UserName cannot be null.");
+            }
+
             if (UserApiKey == null)
+            {
                 throw new ArgumentNullException("UserApiKey", "UserApiKey cannot be null.");
+            }
         }
     }
 }

@@ -14,11 +14,8 @@
 //   limitations under the License. 
 #endregion
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using RestSharp.Portable;
 
 namespace BigCommerce4Net.Api
 {
@@ -48,32 +45,43 @@ namespace BigCommerce4Net.Api
         /// Filter by category visibility.
         /// </summary>
         public bool? IsVisible { get; set; }
-
-
-        public override void AddFilter(IRestRequest request)
+        
+        public override string AddFilter(string request)
         {
-            base.AddFilter(request);
+            request = base.AddFilter(request);
+            var filters = new Dictionary<string, string>();
 
             if (MinimumId != null)
             {
-                request.AddParameter("min_id", MinimumId, ParameterType.GetOrPost);
+                filters.Add("min_id", MinimumId.Value.ToString());
             }
             if (MaximumId != null)
             {
-                request.AddParameter("max_id", MaximumId, ParameterType.GetOrPost);
+                filters.Add("max_id", MaximumId.Value.ToString());
             }
             if (Name != null)
             {
-                request.AddParameter("name", Name, ParameterType.GetOrPost);
+                filters.Add("name", Name);
             }
             if (ParentId != null)
             {
-                request.AddParameter("parent_id", ParentId, ParameterType.GetOrPost);
+                filters.Add("parent_id", ParentId.Value.ToString());
             }
             if (IsVisible != null)
             {
-                request.AddParameter("is_visible", IsVisible, ParameterType.GetOrPost);
+                filters.Add("is_visible", IsVisible.Value.ToString());
             }
+
+            var filterString = string.Join("&",
+                    filters.Select(kvp =>
+                    string.Format("{0}={1}", kvp.Key, System.Net.WebUtility.UrlEncode(kvp.Value))));
+
+            if (!request.Contains("?") && filters.Keys.Count > 0)
+            {
+                request += "?" + filterString;
+            }
+
+            return request;
         }
     }
 }

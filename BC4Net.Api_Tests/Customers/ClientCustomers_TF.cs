@@ -33,9 +33,9 @@ namespace BC4Net.Api_Tests.Customers
 
             var response = await Client.Customers.GetAsync(filter);
 
-            Assert.Equal(response.RestResponse.StatusCode, System.Net.HttpStatusCode.OK);
-            Assert.Equal(response.Data.Count, 1);
-            Assert.Equal(response.Data[0].Id, 3);
+            Assert.Equal(System.Net.HttpStatusCode.OK, response.RestResponse.StatusCode);
+            Assert.Equal(1, response.Data.Count);
+            Assert.Equal(3, response.Data[0].Id);
         }
 
         [Fact]

@@ -17,12 +17,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using RestSharp.Portable;
 using Newtonsoft.Json;
-using RestSharp.Portable.HttpClient;
-using RestSharp.Portable.Authenticators;
 using System.Threading.Tasks;
-using System.Collections;
+using System.Net.Http;
+using System.Net.Http.Headers;
 
 namespace BigCommerce4Net.Api
 {
@@ -45,47 +43,19 @@ namespace BigCommerce4Net.Api
 
         protected async Task<IClientResponse<T>> CountAsync<T>(string resourceEndpoint, IFilter filter) where T : new()
         {
-            var request = new RestRequest(resourceEndpoint);
-            if (filter != null)
-            {
-                filter.AddFilter(request);
-            }
-
-            var response = RestGetAsync<T>(request);
-
-            var clientResponse = new ClientResponse<T>()
-            {
-                RestResponse = await response,
-            };
-
-            if (response.Result.Data != null)
-            {
-                clientResponse.Data = response.Result.Data;
-            }
-
-            DeserializeErrorData(clientResponse);
-            return clientResponse as IClientResponse<T>;
+            return await GetDataAsync<T>(resourceEndpoint, filter);
         }
 
         protected async Task<IClientResponse<T>> GetDataAsync<T>(string resourceEndpoint, IFilter filter = null) where T : new()
         {
-            var request = new RestRequest(resourceEndpoint);
-
             if (filter != null)
             {
-                filter.AddFilter(request);
+                resourceEndpoint = filter.AddFilter(resourceEndpoint);
             }
 
-            var response = RestGetAsync<T>(request);
-
-            var clientResponse = new ClientResponse<T>()
-            {
-                RestResponse = await response,
-            };
-            if (response.Result.Data != null)
-            {
-                clientResponse.Data = response.Result.Data;
-            }
+            var request = new HttpRequestMessage();
+            request.RequestUri = new Uri(new Uri(_Configuration.ServiceURL), resourceEndpoint);
+            var clientResponse = await RestGetAsync<T>(request);
 
             DeserializeErrorData(clientResponse);
             return clientResponse;
@@ -93,17 +63,12 @@ namespace BigCommerce4Net.Api
 
         protected async Task<IClientResponse<T>> PutDataAsync<T>(string resourceEndpoint, string json) where T : new()
         {
-            var request = new RestRequest(resourceEndpoint);
+            var request = new HttpRequestMessage();
+            request.RequestUri = new Uri(new Uri(_Configuration.ServiceURL), resourceEndpoint);
+            request.Content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-            request.AddParameter("application/json", json, ParameterType.RequestBody);
-
-            var response = RestPutAsync<T>(request);
-
-            var clientResponse = new ClientResponse<T>()
-            {
-                RestResponse = await response,
-                Data = response.Result.Data
-            };
+            var clientResponse = await RestPutAsync<T>(request);
 
             DeserializeErrorData(clientResponse);
             return clientResponse;
@@ -111,17 +76,12 @@ namespace BigCommerce4Net.Api
 
         protected async Task<IClientResponse<T>> PostDataAsync<T>(string resourceEndpoint, string json) where T : new()
         {
-            var request = new RestRequest(resourceEndpoint);
+            var request = new HttpRequestMessage();
+            request.RequestUri = new Uri(new Uri(_Configuration.ServiceURL), resourceEndpoint);
+            request.Content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-            request.AddParameter("application/json", json, ParameterType.RequestBody);
-
-            var response = RestPostAsync<T>(request);
-
-            var clientResponse = new ClientResponse<T>()
-            {
-                RestResponse = await response,
-                Data = response.Result.Data
-            };
+            var clientResponse = await RestPostAsync<T>(request);
 
             DeserializeErrorData(clientResponse);
             return clientResponse;
@@ -134,17 +94,10 @@ namespace BigCommerce4Net.Api
             //Just making sure you want to delete data --just for little extra safety
             if (_Configuration.AllowDeletions)
             {
+                var request = new HttpRequestMessage();
+                request.RequestUri = new Uri(new Uri(_Configuration.ServiceURL), resourceEndpoint);
 
-                var request = new RestRequest(resourceEndpoint);
-
-                var response = RestDeleteAsync<object>(request);
-
-                clientResponse = new ClientResponse<bool>()
-                {
-                    RestResponse = await response,
-                    Data = response.Result.StatusCode == System.Net.HttpStatusCode.NoContent ? true : false
-                };
-
+                clientResponse = await RestDeleteAsync<bool>(request);
             }
             else
             {
@@ -160,15 +113,10 @@ namespace BigCommerce4Net.Api
 
         protected async Task<IClientResponse<T>> GetHttpOptionsDataAsync<T>(string resourceEndpoint) where T : new()
         {
-            var request = new RestRequest(resourceEndpoint);
+            var request = new HttpRequestMessage();
+            request.RequestUri = new Uri(new Uri(_Configuration.ServiceURL), resourceEndpoint);
 
-            var response = RestOptionsAsync<T>(request);
-
-            var clientResponse = new ClientResponse<T>()
-            {
-                RestResponse = await response,
-                Data = response.Result.Data
-            };
+            var clientResponse = await RestOptionsAsync<T>(request);
 
             DeserializeErrorData(clientResponse);
             return clientResponse;
@@ -178,14 +126,18 @@ namespace BigCommerce4Net.Api
         private void DeserializeErrorData<T>(IClientResponse<T> response)
         {
 
-            if (response.RestResponse.StatusCode == System.Net.HttpStatusCode.OK) return;
-            if (response.RestResponse.StatusCode == System.Net.HttpStatusCode.Created) return;
-            if (response.RestResponse.StatusCode == System.Net.HttpStatusCode.Accepted) return;
-            if (response.RestResponse.StatusCode == System.Net.HttpStatusCode.NoContent) return;
+            switch (response.RestResponse.StatusCode)
+            {
+                case System.Net.HttpStatusCode.OK:
+                case System.Net.HttpStatusCode.Created:
+                case System.Net.HttpStatusCode.Accepted:
+                case System.Net.HttpStatusCode.NoContent:
+                    return;
+            }
 
             try
             {
-                response.ResponseErrors = JsonConvert.DeserializeObject<List<Domain.Error>>(response.RestResponse.Content);
+                response.ResponseErrors = JsonConvert.DeserializeObject<List<Domain.Error>>(response.RestResponse.Content.ToString());
             }
             catch (JsonSerializationException ex)
             {
@@ -194,70 +146,78 @@ namespace BigCommerce4Net.Api
             }
         }
 
-        private async Task<IRestResponse<T>> RestGetAsync<T>(IRestRequest request) where T : new()
+        private async Task<ClientResponse<T>> RestGetAsync<T>(HttpRequestMessage request) where T : new()
         {
-            request.Method = Method.GET;
+            request.Method = HttpMethod.Get;
 
             return await RestExecuteAsync<T>(request);
         }
 
-        private async Task<IRestResponse<T>> RestPutAsync<T>(IRestRequest request) where T : new()
+        private async Task<ClientResponse<T>> RestPutAsync<T>(HttpRequestMessage request) where T : new()
         {
-            request.Method = Method.PUT;
+            request.Method = HttpMethod.Put;
 
             return await RestExecuteAsync<T>(request);
         }
 
-        private async Task<IRestResponse<T>> RestPostAsync<T>(IRestRequest request) where T : new()
+        private async Task<ClientResponse<T>> RestPostAsync<T>(HttpRequestMessage request) where T : new()
         {
-            request.Method = Method.POST;
+            request.Method = HttpMethod.Post;
 
             return await RestExecuteAsync<T>(request);
         }
 
-        private async Task<IRestResponse<T>> RestDeleteAsync<T>(IRestRequest request) where T : new()
+        private async Task<ClientResponse<T>> RestDeleteAsync<T>(HttpRequestMessage request) where T : new()
         {
-            request.Method = Method.DELETE;
+            request.Method = HttpMethod.Delete;
 
             return await RestExecuteAsync<T>(request);
         }
 
-        private async Task<IRestResponse<T>> RestOptionsAsync<T>(IRestRequest request) where T : new()
+        private async Task<ClientResponse<T>> RestOptionsAsync<T>(HttpRequestMessage request) where T : new()
         {
-            request.Method = Method.OPTIONS;
+            request.Method = HttpMethod.Options;
 
             return await RestExecuteAsync<T>(request);
         }
 
-        private async Task<IRestResponse<T>> RestExecuteAsync<T>(IRestRequest request) where T : new()
+        private async Task<ClientResponse<T>> RestExecuteAsync<T>(HttpRequestMessage request) where T : new()
         {
-            request.AddParameter("Accept", "application/json", ParameterType.HttpHeader);
-            request.AddParameter("User-Agent", _Configuration.UserAgent, ParameterType.HttpHeader);
+            var client = new HttpClient();
 
-            var client = new RestClient(_Configuration.ServiceURL);
-
+            request.Headers.Add("User-Agent", _Configuration.UserAgent);
+            request.Headers.Add("Accept", "application/json");
+            
             if (_Authentication == null)
             {
-                client.Authenticator = new HttpBasicAuthenticator(_Configuration.UserName, _Configuration.UserApiKey);            
+                var credentials = new System.Net.NetworkCredential(_Configuration.UserName, _Configuration.UserApiKey);
+                var handler = new HttpClientHandler { Credentials = credentials };
+                client = new HttpClient(handler);
             }
             else
             {
-                request.AddParameter("X-Auth-Client", _Configuration.UserName, ParameterType.HttpHeader);
-			    request.AddParameter("X-Auth-Token", _Authentication.AccessToken, ParameterType.HttpHeader);
+                request.Headers.Add("X-Auth-Client", _Configuration.UserName);
+                request.Headers.Add("X-Auth-Token", _Authentication.AccessToken);
             }
-
+            
             client.Timeout = TimeSpan.FromSeconds(_Configuration.RequestTimeout);
 
-            client.ContentHandlers["application/json"] = new Deserializers.NewtonSoftJsonDeserializer();
+            var response = await client.SendAsync(request);
+            var responseStringContent = await response.Content.ReadAsStringAsync();
+            //throw new Exception("url: " + request.RequestUri + "\ncontent: " + responseStringContent);
 
-            var response = await client.Execute<T>(request);
+            var clientResponse = new ClientResponse<T>
+            {
+                Data = JsonConvert.DeserializeObject<T>(responseStringContent),
+                RestResponse = response
+            };
 
             CheckForThrottling(response);
 
-            return response;
+            return clientResponse;
         }
 
-        private void CheckForThrottling(IRestResponse response)
+        private void CheckForThrottling(HttpResponseMessage response)
         {
             if (_Configuration.RequestThrottling == true)
             {
@@ -275,24 +235,23 @@ namespace BigCommerce4Net.Api
                     }
                 }
             }
-
         }
 
-        protected static void ShowIdAndApiLimit(object id, IRestResponse restResponse)
+        protected static void ShowIdAndApiLimit(object id, HttpResponseMessage restResponse)
         {
             var apiLimit = restResponse.Headers.Where(x => x.Key == "X-BC-ApiLimit-Remaining").FirstOrDefault().Value;
             Console.WriteLine("Id {0} -- API Limit: {1}", id, apiLimit);
         }
 
-        protected void StatusCodeLogging(IRestResponse response, Type type)
+        protected void StatusCodeLogging(HttpResponseMessage response, Type type)
         {
             if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
             {
-                Console.WriteLine("[{0}] - Http Status Code: {1} - {2}", type.Name, (int)response.StatusCode, response.StatusDescription);
+                Console.WriteLine("[{0}] - Http Status Code: {1}", type.Name, (int)response.StatusCode);
             }
             else
             {
-                Console.WriteLine("[{0}] - Http Status Code: {1} - {2}", type.Name, (int)response.StatusCode, response.StatusDescription);
+                Console.WriteLine("[{0}] - Http Status Code: {1}", type.Name, (int)response.StatusCode);
             }
         }
 
@@ -307,7 +266,7 @@ namespace BigCommerce4Net.Api
 
             recordsPerPage = (_Configuration.RecordsPerPage > _Configuration.MaxPageLimit)
                     ? _Configuration.MaxPageLimit : _Configuration.RecordsPerPage;
-            
+
             itemsCount = (await client.CountAsync(filter)).Data.Count;
             pageCount = itemsCount / recordsPerPage;
             remainingCount = itemsCount % recordsPerPage;
@@ -376,16 +335,15 @@ namespace BigCommerce4Net.Api
             return items;
         }
 
-        private static string GetErrorStatus(IRestResponse response)
+        private static string GetErrorStatus(HttpResponseMessage response)
         {
-            string str = string.Format("Http Status Code: {0} - {1} URL: {2}",
+            string str = string.Format("Http Status Code: {0} - URL: {1}",
                             (int)response.StatusCode,
-                            response.StatusDescription,
-                            response.ResponseUri.AbsoluteUri);
+                            response.RequestMessage.RequestUri.AbsoluteUri);
             return str;
         }
 
-        private static string GetPagingStatus(IRestResponse response, int? page, int count)
+        private static string GetPagingStatus(HttpResponseMessage response, int? page, int count)
         {
             if (page == null)
             {

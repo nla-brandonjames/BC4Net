@@ -14,7 +14,6 @@
 //   limitations under the License. 
 #endregion
 
-using System;
 using System.Collections.Generic;
 
 namespace BigCommerce4Net.Api
@@ -22,7 +21,7 @@ namespace BigCommerce4Net.Api
     public interface IClientResponse<T>
     {
         T Data { get; set; }
-        global::RestSharp.Portable.IRestResponse RestResponse { get; set; }
+        global::System.Net.Http.HttpResponseMessage RestResponse { get; set; }
         IList<BigCommerce4Net.Domain.Error> ResponseErrors { get; set; }
     }
 }

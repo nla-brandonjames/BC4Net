@@ -14,17 +14,11 @@
 //   limitations under the License. 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using RestSharp.Portable;
-
 namespace BigCommerce4Net.Api
 {
     public interface IFilter
     {
-        void AddFilter(IRestRequest request);
+        string AddFilter(string request);
         int? Limit { get; set; }
         int? Page { get; set; }
     }

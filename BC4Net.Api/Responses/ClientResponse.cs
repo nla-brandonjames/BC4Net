@@ -14,18 +14,14 @@
 //   limitations under the License. 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using RestSharp.Portable;
-using BigCommerce4Net.Domain;
+using System.Net.Http;
 
 namespace BigCommerce4Net.Api
 {
     public class ClientResponse<T> : BigCommerce4Net.Api.IClientResponse<T>
     {
-        public IRestResponse RestResponse { get; set; }
+        public HttpResponseMessage RestResponse { get; set; }
         public T Data { get; set; }
         public IList<BigCommerce4Net.Domain.Error> ResponseErrors { get; set; }
     }
