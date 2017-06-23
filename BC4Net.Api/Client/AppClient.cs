@@ -13,6 +13,7 @@ namespace BigCommerce4Net.Api
         public string Code { get; set; }
         public string Scope { get; set; }
         public string Context { get; set; }
+        public string AuthenticationResponse { get; set; }
 
         public AppClient(Configuration configuration) : base(configuration) { }
 
@@ -58,14 +59,15 @@ namespace BigCommerce4Net.Api
 
             HttpResponseMessage response = await client.PostAsync("/oauth2/token", payload);
             HttpContent content = response.Content;
-            string result = await content.ReadAsStringAsync();
+            string authenticationContent = await content.ReadAsStringAsync();
+            AuthenticationResponse = authenticationContent;
 
             if (!response.IsSuccessStatusCode)
             {
-                throw new HttpRequestException("Incorrect segments in store details.");
+                throw new HttpRequestException("There was a problem with your request!");
             }
 
-            JObject data = JObject.Parse(result);
+            JObject data = JObject.Parse(authenticationContent);
             string[] storeDetails = data["context"].ToString().Split('/');
             string accessToken = data["access_token"].ToString();
             _Authentication.AccessToken = accessToken;
