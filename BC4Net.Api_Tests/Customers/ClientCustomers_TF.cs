@@ -63,11 +63,7 @@ namespace BC4Net.Api_Tests.Customers
 
             decimal storecredit = 8000.00M;
 
-            var updatedata = new { store_credit = storecredit };
-
-            string json = JsonConvert.SerializeObject(updatedata, Formatting.None);
-
-            var response1 = await Client.Customers.UpdateAsync(TEST_CUSTOMER_ID, json);
+            var response1 = await Client.Customers.UpdateAsync(TEST_CUSTOMER_ID, new { store_credit = storecredit });
 
             Assert.NotEqual(null, response.Data);
             Assert.Equal(TEST_CUSTOMER_ID, response1.Data.Id);

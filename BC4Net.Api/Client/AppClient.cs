@@ -1,5 +1,7 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
+using System.Net.Http;
 
 namespace BigCommerce4Net.Api
 {
@@ -35,6 +37,63 @@ namespace BigCommerce4Net.Api
             {
                 configuration.StoreHash = context.Split('/')[1];
             }
+        }
+
+        public async System.Threading.Tasks.Task Authenticate()
+        {
+            var authDetails = new Dictionary<string, string>
+            {
+                { "client_id", ClientId },
+                { "client_secret", ClientSecret },
+                { "redirect_uri", RedirectUri },
+                { "grant_type", "authorization_code" },
+                { "code", Code },
+                { "scope", Scope },
+                { "context", Context },
+            };
+
+            var payload = new FormUrlEncodedContent(authDetails);
+            var client = new HttpClient();
+            client.BaseAddress = new System.Uri("https://login.bigcommerce.com");
+
+            HttpResponseMessage response = await client.PostAsync("/oauth2/token", payload);
+            HttpContent content = response.Content;
+            string result = await content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new HttpRequestException("Incorrect segments in store details.");
+            }
+
+            JObject data = JObject.Parse(result);
+            string[] storeDetails = data["context"].ToString().Split('/');
+            string accessToken = data["access_token"].ToString();
+            _Authentication.AccessToken = accessToken;
+        }
+
+        public async System.Threading.Tasks.Task Authenticate(
+                        string clientId,
+                        string clientSecret,
+                        string redirectUri,
+                        string code,
+                        string scope,
+                        string context)
+        {
+            ClientId = clientId;
+            ClientSecret = clientSecret;
+            RedirectUri = redirectUri;
+            Code = code;
+            Scope = scope;
+            Context = context;
+
+            _Configuration.UserName = clientId;
+
+            if (context.Contains("/"))
+            {
+                _Configuration.StoreHash = context.Split('/')[1];
+            }
+
+            await Authenticate();
         }
     }
 

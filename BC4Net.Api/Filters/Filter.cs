@@ -64,12 +64,16 @@ namespace BigCommerce4Net.Api
                 filters.Add("page", Page.Value.ToString());
             }
 
-            var url = string.Format(request + "?{0}",
-                    string.Join("&",
-                    filters.Select(kvp =>
-                    string.Format("{0}={1}", kvp.Key, System.Net.WebUtility.UrlEncode(kvp.Value)))));
+            var url = string.Format(request + "?{0}", EncodeFilterString(filters));
 
             return url;
+        }
+
+        public virtual string EncodeFilterString(IDictionary<string, string> filters)
+        {
+            return string.Join("&",
+                    filters.Select(kvp =>
+                    string.Format("{0}={1}", kvp.Key, System.Net.WebUtility.UrlEncode(kvp.Value))));
         }
     }
 

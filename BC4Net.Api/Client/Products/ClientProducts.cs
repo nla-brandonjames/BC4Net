@@ -21,9 +21,9 @@ using System.Threading.Tasks;
 
 namespace BigCommerce4Net.Api.ResourceClients
 {
-    public class ClientProducts : 
-        ClientBase, 
-        IParentResourcePaging<Product>, 
+    public class ClientProducts :
+        ClientBase,
+        IParentResourcePaging<Product>,
         IParentResourceGetUpdateDeleteCreate<Product>,
         IParentResourceCount
     {

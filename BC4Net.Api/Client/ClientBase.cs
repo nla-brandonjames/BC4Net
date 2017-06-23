@@ -61,11 +61,11 @@ namespace BigCommerce4Net.Api
             return clientResponse;
         }
 
-        protected async Task<IClientResponse<T>> PutDataAsync<T>(string resourceEndpoint, string json) where T : new()
+        protected async Task<IClientResponse<T>> PutDataAsync<T>(string resourceEndpoint, object updateData) where T : new()
         {
             var request = new HttpRequestMessage();
             request.RequestUri = new Uri(new Uri(_Configuration.ServiceURL), resourceEndpoint);
-            request.Content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+            request.Content = new StringContent(JsonConvert.SerializeObject(updateData), System.Text.Encoding.UTF8, "application/json");
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
             var clientResponse = await RestPutAsync<T>(request);
@@ -74,11 +74,11 @@ namespace BigCommerce4Net.Api
             return clientResponse;
         }
 
-        protected async Task<IClientResponse<T>> PostDataAsync<T>(string resourceEndpoint, string json) where T : new()
+        protected async Task<IClientResponse<T>> PostDataAsync<T>(string resourceEndpoint, object updateData) where T : new()
         {
             var request = new HttpRequestMessage();
             request.RequestUri = new Uri(new Uri(_Configuration.ServiceURL), resourceEndpoint);
-            request.Content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+            request.Content = new StringContent(JsonConvert.SerializeObject(updateData), System.Text.Encoding.UTF8, "application/json");
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
             var clientResponse = await RestPostAsync<T>(request);

@@ -127,9 +127,7 @@ namespace BigCommerce4Net.Api
                 filters.Add("max_date_created", String.Format(RFC2822_DATE_FORMAT, MaxDateCreated));
             }
 
-            var filterString = string.Join("&",
-                    filters.Select(kvp =>
-                    string.Format("{0}={1}", kvp.Key, System.Net.WebUtility.UrlEncode(kvp.Value))));
+            var filterString = EncodeFilterString(filters);
 
             if (!request.Contains("?") && filters.Keys.Count > 0)
             {

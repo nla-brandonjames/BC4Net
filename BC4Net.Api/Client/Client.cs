@@ -20,7 +20,7 @@ namespace BigCommerce4Net.Api
 {
     public class Client
     {
-        private readonly Configuration _Configuration;
+        protected readonly Configuration _Configuration;
         protected readonly BCAuthentication _Authentication;
 
         public Client(Configuration configuration, BCAuthentication authentication = null)
