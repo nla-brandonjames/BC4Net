@@ -22,7 +22,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BC4Net.Api\BC4Net.Api.csproj" />
-    <ProjectReference Include="..\BC4Net.Domain\BC4Net.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>

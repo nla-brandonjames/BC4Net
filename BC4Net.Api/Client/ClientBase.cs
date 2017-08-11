@@ -188,7 +188,7 @@ namespace BigCommerce4Net.Api
             request.Headers.Add("User-Agent", _Configuration.UserAgent);
             request.Headers.Add("Accept", "application/json");
             
-            if (_Authentication == null)
+            if (string.IsNullOrEmpty(_Authentication.AccessToken))
             {
                 var credentials = new System.Net.NetworkCredential(_Configuration.UserName, _Configuration.UserApiKey);
                 var handler = new HttpClientHandler { Credentials = credentials };

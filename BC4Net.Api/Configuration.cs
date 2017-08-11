@@ -50,8 +50,8 @@ namespace BigCommerce4Net.Api
             RecordsPerPage = 250;
             AllowDeletions = false;
         }
-        public Configuration(string serviceURL, string userName, string userApiKey)
-            : this()
+
+        public Configuration(string serviceURL, string userName, string userApiKey) : this()
         {
             UserName = userName;
             UserApiKey = userApiKey;
